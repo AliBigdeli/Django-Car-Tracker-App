@@ -8,6 +8,7 @@ class Device(models.Model):
     )
     name = models.CharField(max_length=255)
     token = models.CharField(max_length=15, unique=True, blank=True)
+    cellnumber = models.CharField(max_length=12,null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
