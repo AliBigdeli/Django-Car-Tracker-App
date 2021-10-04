@@ -1,0 +1,35 @@
+{
+  "name": "UrlSaver APP",
+  "description": "A django app project to keep your urls inside",
+  "repository": "https://github.com/AliBigdeli/Django-URLSaver-App",
+  "website": "https://alibigdeli.github.io",
+  "keywords": [
+    "django",
+    "djangorestframework",
+    "djangotemplate",
+    "python"
+  ],
+  "env": {    
+    "DJANGO_SUPERUSER_USERNAME": {
+      "description": "username for your superuser"
+    },
+    "DJANGO_SUPERUSER_PASSWORD": {
+      "description": "password for your superuser, please choose an strong one"
+    },
+    "DJANGO_SUPERUSER_EMAIL": {
+      "description": "email for your superuser"
+    }
+    ,
+    "SECRET_KEY": {
+      "description": "A secret key to encrypt data",
+      "generator": "secret"
+    }
+  },
+  "image": "heroku/python",
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-python.git"
+    }
+  ],
+  "success_url": "/"
+}

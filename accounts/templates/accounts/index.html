@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Authentication {% endblock %}
+
+{% block extra_css %}
+<style>
+    .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+            font-size: 3.5rem;
+        }
+    }
+</style>
+<link href="https://getbootstrap.com/docs/5.1/examples/sign-in/signin.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+
+    <main class="form-signin text-center">
+        <section class="justify-content-center mb-4">
+            <div style="max-width: 300; width: 100%;">
+                <!-- Pills navs 
+                <ul class="nav nav-pills nav-justified mb-3 " id="ex1" role="tablist">
+                    <li class="nav-item bg-light rounded" role="presentation">
+                        <a class="nav-link active" id="tab-login" data-bs-toggle="pill" role="tab"
+                            data-bs-target="#pills-login" aria-selected="true" type="button"
+                            aria-controls="pills-login">Login</a>
+                    </li>
+
+                    <li class="nav-item bg-light rounded" role="presentation">
+                        <a class="nav-link" id="tab-register" data-bs-toggle="pill" role="tab"
+                            data-bs-target="#pills-register" role="tab" aria-controls="pills-register"
+                            aria-selected="false" type="button">Register</a>
+                    </li>
+                </ul>
+               Pills navs -->
+
+                <!-- Pills content -->
+                <div class="tab-content pt-3" id="pills-tabContent">
+                    <div class="tab-pane fade active show" id="pills-login" role="tabpanel" aria-labelledby="tab-login">
+                        <form id="login-form">
+                            <a href="https://github.com/alibigdeli/Django-UrlSaver-App"><img
+                                    class="mb-4 rounded-circle border-3 border-white shadow p-1 mb"
+                                    src="{% static 'img/logo.png' %}" alt="" width="150" height="150"></a>
+                            <h1 class="h3 mb-3 fw-normal">Please Sign In</h1>
+                            <div class="form-floating">
+                                <input type="username" name="username" class="form-control"
+                                    placeholder="name@example.com" id="login-username">
+                                <label for="floatingInput">Username</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="password" name="password" class="form-control" placeholder="Password"
+                                    id="login-password">
+                                <label for="floatingPassword">Password</label>
+                            </div>
+
+                            <div class="checkbox mb-3">
+                                <label>
+                                    <input type="checkbox" value="remember-me"> Remember me
+                                </label>
+                            </div>
+                            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+
+                            <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+                            <p class="mt-5 mb-3 text-muted">This app was created by <a href="http://github.com/alibigdeli">alibigdeli</a> for private usage of storing urls</p>
+                        </form>
+                    </div>
+                    <!-- 
+                    <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
+                        <form id="register-form">
+                            <a href="https://github.com/alibigdeli"><img
+                                    class="mb-4 rounded-circle border-3 border-white shadow p-1 mb"
+                                    src="https://icc-aria.ir/static/img/team_11.jpg" alt="" width="150"
+                                    height="150"></a>
+                            <h1 class="h3 mb-3 fw-normal">Please Register</h1>
+                            <div class="form-floating">
+                                <input type="username" name="username" class="form-control"
+                                    placeholder="name@example.com" id="register-username">
+                                <label for="floatingInput">Username</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="password" name="password1" class="form-control mb-0" placeholder="Password"
+                                    id="register-password1">
+                                <label for="floatingPassword">Password</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="password" name="password2" class="form-control" placeholder="Password"
+                                    id="register-password2">
+                                <label for="floatingPassword">Repeate Password</label>
+                            </div>
+
+
+                            <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+
+                            <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+                        </form>
+
+
+
+                    </div>
+                -->
+                </div>
+
+
+                <!-- Pills content -->
+            </div>
+        </section>
+
+
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    let csrftoken = getCookie('csrftoken');
+
+
+    let login_form = document.getElementById('login-form')
+    login_form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        // console.log('Form submitted')
+        let url = '/accounts/api/login/'
+        let login_username = document.getElementById('login-username').value
+        let login_password = document.getElementById('login-password').value
+        console.log(login_username + ' ' + login_password)
+        var Http = new XMLHttpRequest();
+        Http.open("POST", url);
+        Http.setRequestHeader("Accept", "application/json");
+        Http.setRequestHeader("Content-Type", "application/json");
+        Http.setRequestHeader("X-CSRFToken", csrftoken);
+
+        Http.onreadystatechange = function () {
+            if (Http.readyState === 4) {
+                // console.log(Http.status);
+                response = JSON.parse(Http.responseText);
+                // console.log(response);
+                if (Http.status === 200) {
+                    location.reload();
+                }
+                else {
+                    alert(`Error: ${Http.status} \nMsg: ${response["non_field_errors"]}`)
+                }
+            }
+        }
+        data = JSON.stringify({ 'username': login_username, 'password': login_password })
+        Http.send(data);
+    });
+
+    let register_form = document.getElementById('register-form')
+    register_form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        // console.log('Form submitted')
+        let url = '/accounts/api/register/'
+        let register_username = document.getElementById('register-username').value
+        let register_password1 = document.getElementById('register-password1').value
+        let register_password2 = document.getElementById('register-password2').value
+        var Http = new XMLHttpRequest();
+        Http.open("POST", url);
+        Http.setRequestHeader("Accept", "application/json");
+        Http.setRequestHeader("Content-Type", "application/json");
+        Http.setRequestHeader("X-CSRFToken", csrftoken);
+
+        Http.onreadystatechange = function () {
+            if (Http.readyState === 4) {
+                // console.log(Http.status);
+                response = JSON.parse(Http.responseText);
+                // console.log(response);
+                if (Http.status === 201) {
+                    location.reload();
+                }
+                else {
+                    alert(`Error: ${Http.status} \nMsg: ${response["non_field_errors"]}`)
+                }
+            }
+        }
+        data = JSON.stringify({ 'username': register_username, 'password1': register_password1, 'password2': register_password2 })
+        Http.send(data);
+    });
+
+</script>
+{% endblock %}

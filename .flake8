@@ -1,0 +1,10 @@
+[flake8]
+exclude = 
+    migrations,
+    __pycache__,
+    manage.py,
+    settings.py,
+    heroku_settings.py
+    venv,
+    env,
+max-line-length = 79

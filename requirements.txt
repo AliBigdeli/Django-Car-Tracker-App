@@ -1,0 +1,14 @@
+
+Django>3.2,<3.3
+djangorestframework>3.12,<3.13
+django-cors-headers
+markdown
+django-filter
+gunicorn 
+django-decouple
+whitenoise
+psycopg2
+ConfigParser
+django-heroku
+flake8
+black
