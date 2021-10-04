@@ -1,21 +1,43 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .utils import create_device_token
 
-
-class Link(models.Model):
+class Device(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, blank=True
     )
-    title = models.CharField(max_length=255)
-    url = models.URLField()
-    descriptions = models.TextField(blank=True, null=True)
+    name = models.CharField(max_length=255)
+    token = models.CharField(max_length=15, unique=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
     class Meta:
-
         ordering = ["-created_date"]
 
     def __str__(self):
+        return self.name
 
-        return self.url
+    def save(self, *args, **kwargs):
+
+        # If the short url wasn't specified
+        if not self.token:
+            # We pass the model instance that is being saved
+            self.token = create_device_token(self)
+
+        super().save(*args, **kwargs)
+
+class Coordinate(models.Model):
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, null=True, blank=True)
+    lat = models.FloatField()
+    lon = models.FloatField()
+    #time = models.DateTimeField()
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.device.name
+    
+    class Meta:
+        ordering = ["-created_date"]
+
+    

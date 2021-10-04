@@ -1,14 +1,16 @@
 from django.contrib import admin
 
-from .models import Link
+from .models import Device,Coordinate
 
-# Register your models here.
-
-
-class LinkAdmin(admin.ModelAdmin):
-    list_display = ["user", "url", "title"]
-    search_fields = ["user", "url", "title"]
+class DeviceAdmin(admin.ModelAdmin):
+    list_display = ["name", "token","user", "created_date"]
+    search_fields = ["name", "token"]
     list_filter = ("user",)
 
+class CoordinateAdmin(admin.ModelAdmin):
+    list_display = ["lat", "lon","device", "created_date"]
+    search_fields = ["device"]
+    list_filter = ("device",)
 
-admin.site.register(Link, LinkAdmin)
+admin.site.register(Device, DeviceAdmin)
+admin.site.register(Coordinate, CoordinateAdmin)
