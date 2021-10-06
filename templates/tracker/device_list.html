@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+
+{% block title %}GPS Car Tracker | Devices{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item" aria-current="page">Devices</li>
+{% endblock %}
+
+{% block extra_css %}{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+	<div>
+		<h1 class="h2">Devices</h1>
+	</div>
+	<div class="ms-auto">
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FormModal"
+			id="CreateDevice">
+			Add Device
+		</button>
+	</div>
+</div>
+
+
+<hr>
+<div class="table-responsive">
+	<table class="table">
+		<thead class="table-dark">
+
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Name</th>
+				<th scope="col">Token</th>
+				<th scope="col">Cell Number</th>
+				<th scope="col">Created_date</th>
+				<th scope="col">Actions</th>
+			</tr>
+
+		</thead>
+		<tbody id="list-wrapper">
+		</tbody>
+	</table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="FormModal" tabindex="-1" aria-labelledby="FormModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="FormModalLabel">Create Form</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="createForm">
+					<div class="mb-3">
+						<label for="recipient-name" class="col-form-label">Name:</label>
+						<input type="text" class="form-control" id="FormModalName">
+					</div>
+					<div class="mb-3">
+						<label for="recipient-name" class="col-form-label">Cell Number:</label>
+						<input type="text" class="form-control" id="FormModalCellNumber">
+					</div>
+					<div class="mb-3">
+						<label for="message-text" class="col-form-label">Descriptions:</label>
+						<textarea class="form-control" id="FormModalDescriptions"></textarea>
+					</div>
+			</div>
+			<div class="modal-footer" id="ModalFooter">
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = cookies[i].trim();
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+
+	let csrftoken = getCookie('csrftoken');
+
+
+
+	var list_snapshot = []
+	buildList()
+
+	function buildList() {
+		console.log("buildlist")
+		var wrapper = document.getElementById('list-wrapper')
+		//$(wrapper).empty();
+		var url = `/tracker/api/device/list`
+		fetch(url)
+			.then((resp) => resp.json())
+			.then(function (data) {
+				var list = data
+				for (var i in list) {
+					try {
+						document.getElementById(`data-row-${i}`).remove()
+					} catch (err) {
+
+					}
+					var name = list[i].name
+					var token = list[i].token
+					var cellnumber = list[i].cellnumber
+					var created_date = list[i].created_date
+					var item = `<tr id="data-row-${i}">
+						<th scope="row" >${i}</th>
+						<td>${name}</td>
+						<td>${token}</td>
+						<td>${cellnumber}</td>
+						<td>${created_date}</td>
+						<td>
+							<button type="button" class="btn btn-primary detail" data-bs-toggle="modal" data-bs-target="#FormModal">
+								<i class="bi bi-pencil-square"></i>
+							</button>
+							<button type="button" class="btn btn-danger delete" data-bs-toggle="modal" data-bs-target="#FormModal">
+								<i class="bi bi-trash-fill"></i>
+							</button></td>
+						</tr>`
+					wrapper.innerHTML += item
+				}
+
+				if (list_snapshot.length > list.length) {
+					for (var i = list.length; i < list_snapshot.length; i++) {
+						document.getElementById(`data-row-${i}`).remove()
+					}
+				}
+
+				list_snapshot = list
+
+				for (var i in list) {
+					var deleteBtn = document.getElementsByClassName('delete')[i]
+					deleteBtn.addEventListener('click', (function (item) {
+						return function () {
+							deleteModal(item)
+						}
+					})(list[i]))
+				}
+				for (var i in list) {
+					var detailBtn = document.getElementsByClassName('detail')[i]
+					detailBtn.addEventListener('click', (function (item) {
+						return function () {
+							detailModal(item)
+						}
+					})(list[i]))
+				}
+
+			});
+	}
+
+	function deleteModal(item) {
+		data = fetch(`/tracker/api/device/${item.token}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json',
+				'X-CSRFToken': csrftoken,
+			}
+		})
+			.then((resp) => resp.json())
+			.then(function (data) {
+				// console.log(data)
+				obj_name = document.getElementById('FormModalName')
+				obj_cellnumber = document.getElementById('FormModalCellNumber')
+				obj_descriptions = document.getElementById('FormModalDescriptions')
+				modal_footer = document.getElementById('ModalFooter')
+				modal_label = document.getElementById('FormModalLabel')
+				modal_label.innerHTML = "Delete Form"
+
+				modal_footer.innerHTML = "";
+				buttons = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        		<button type="button" class="btn btn-danger" onclick="deleteItem('${item.token}')"data-bs-dismiss="modal">Delete</button>`
+				$(modal_footer).html(buttons);
+				obj_name.value = data.name
+				obj_cellnumber.value = data.cellnumber
+				if (data.descriptions != null)
+					obj_descriptions.value = data.descriptions
+				else
+					obj_descriptions.value = "no descriptions"
+			})
+	}
+
+	function detailModal(item) {
+		data = fetch(`/tracker/api/device/${item.token}`, {
+			method: 'GET',
+			headers: {
+				'Content-type': 'application/json',
+				'X-CSRFToken': csrftoken,
+			}
+		})
+			.then((resp) => resp.json())
+			.then(function (data) {
+				// console.log(data)
+				let modal_label = document.getElementById('FormModalLabel')
+				let obj_name = document.getElementById('FormModalName')
+				let obj_cellnumber = document.getElementById('FormModalCellNumber')
+				let obj_descriptions = document.getElementById('FormModalDescriptions')
+
+				modal_label.innerHTML = "Change Form"
+				modal_footer = document.getElementById('ModalFooter')
+				modal_footer.innerHTML = "";
+				buttons = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        		<button type="button" class="btn btn-primary" onclick="createDevice(update=true,item_token='${item.token}')" id="SubmitButton" data-bs-dismiss="modal">Change</button>`
+				$(modal_footer).html(buttons);
+				obj_name.value = data.name
+				obj_cellnumber.value = data.cellnumber
+				if (data.descriptions != null)
+					obj_descriptions.value = data.descriptions
+				else
+					obj_descriptions.value = "no descriptions"
+
+			})
+	}
+
+	function deleteItem(item_token) {
+
+		fetch(`/tracker/api/device/${item_token}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-type': 'application/json',
+				'X-CSRFToken': csrftoken,
+			}
+		}).then((response) => {
+			buildList()
+		})
+	}
+
+	let create_btn = document.getElementById('CreateDevice')
+	create_btn.addEventListener('click', function (e) {
+		let form = document.getElementById('createForm')
+		form.reset();
+		modal_label = document.getElementById('FormModalLabel')
+		modal_label.innerHTML = "Create Form"
+		modal_footer = document.getElementById('ModalFooter')
+		modal_footer.innerHTML = "";
+		buttons = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" onclick="createDevice()" id="SubmitButton" data-bs-dismiss="modal">Create</button>`
+		$(modal_footer).html(buttons);
+	})
+
+
+
+
+	function createDevice(update = false, item_token = null) {
+		let url
+		let code
+		if (update) {
+			url = `/tracker/api/device/${item_token}`
+			code = 200
+		}
+		else {
+			url = `/tracker/api/device/list`
+			code = 201
+		}
+
+		let obj_name = document.getElementById('FormModalName').value
+		let obj_cellnumber = document.getElementById('FormModalCellNumber').value
+		let obj_descriptions = document.getElementById('FormModalDescriptions').value
+		var Http = new XMLHttpRequest();
+		Http.open("POST", url);
+		Http.setRequestHeader("Accept", "application/json");
+		Http.setRequestHeader("Content-Type", "application/json");
+		Http.setRequestHeader("X-CSRFToken", csrftoken);
+
+		Http.onreadystatechange = function () {
+
+			if (Http.readyState === 4) {
+				// // console.log(Http.status);
+				response = JSON.parse(Http.responseText);
+				// // console.log(response);
+				if (Http.status !== code) {
+					alert(`Error: ${Http.status} \nMsg: ${Http.responseText}`)
+				}
+			}
+			buildList()
+			document.getElementById('createForm').reset()
+
+		}
+
+		data = JSON.stringify({ "name": obj_name, "cellnumber": obj_cellnumber, "descriptions": obj_descriptions })
+		Http.send(data);
+	}
+
+</script>
+
+{% endblock %}

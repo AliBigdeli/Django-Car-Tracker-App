@@ -112,7 +112,7 @@ class CoordinateListView(APIView):
         List all the coordinate items for given requested user
         """
         device = self.get_device_obj(token,request.user.id)
-        coordinates = Coordinate.objects.filter(device=device.id)
+        coordinates = Coordinate.objects.filter(device=device.id)[:20]
         serializer = CoordinateSerializer(coordinates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

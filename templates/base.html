@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="js-focus-visible" data-js-focus-visible="">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body data-new-gr-c-s-check-loaded="14.1031.0" data-gr-ext-installed="">
+  <nav class="navbar fixed-top navbar-dark bg-dark p-3 shadow">
+    <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-geo-alt-fill"></i> GPS Car Tracking
+
+      </a>
+      <button class="navbar-toggler d-md-none mb-3 collapsed" type="button" data-bs-toggle="collapse"
+        data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+    <div class="col-12 col-md-4 col-lg-2">
+      <nav aria-label="breadcrumb " id="breadcrumb">
+        <ol class="breadcrumb text-white">
+          <li class="breadcrumb-item">Home</li>
+          {% block breadcrumb %}{% endblock %}
+        </ol>
+      </nav>
+    </div>
+    <div class="col-12 col-md-5 col-lg-8 d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
+      <div class="mr-3 mt-1">
+        <span></span>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          Hello, {{request.user.username}}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item" href="#" id="logout">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <div class="row">
+      <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+        <div class="position-sticky">
+          <ul class="nav flex-column">
+
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="{% url 'tracker:index' %}">
+                <i class="bi bi-grid-1x2"></i>
+                <span class="ml-2 px-2">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="{% url 'tracker:device_list' %}">
+                <i class="bi bi-cpu-fill"></i>
+                <span class="ml-2 px-2">Devices</span>
+              </a>
+            </li>
+            {% block sidebar_link %}{% endblock %}
+          </ul>
+        </div>
+      </nav>
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+        {% block content %}
+        {% endblock %}
+        <!--
+        <footer class="pt-5 d-flex justify-content-between">
+          <span>Copyright © 2020-2022 <a href="https://github.com/alibigdeli">Ali Bigdeli</a></span>
+        </footer>
+        -->
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+    integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+
+  <script type="text/javascript">
+    let logout = document.getElementById('logout')
+    logout.addEventListener('click', function (e) {
+      const Http = new XMLHttpRequest();
+      const url = `/accounts/api/logout`
+      Http.open("GET", url);
+      Http.send();
+
+      Http.onreadystatechange = (e) => {
+        // console.log(Http.responseText)
+        if (Http.status == 200) {
+          location.reload();
+        }
+      }
+    })
+  </script>
+  {% block extra_js %}{% endblock %}
+
+</body>
+<grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration>
+<loom-container id="lo-engage-ext-container">
+  <loom-shadow classname="resolved"></loom-shadow>
+</loom-container>
+
+</html>

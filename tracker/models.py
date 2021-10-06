@@ -9,11 +9,12 @@ class Device(models.Model):
     name = models.CharField(max_length=255)
     token = models.CharField(max_length=15, unique=True, blank=True)
     cellnumber = models.CharField(max_length=12,null=True)
+    descriptions = models.TextField(null=True,blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["-created_date"]
+        ordering = ["created_date"]
 
     def __str__(self):
         return self.name
@@ -31,6 +32,7 @@ class Coordinate(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE, null=True, blank=True)
     lat = models.FloatField()
     lon = models.FloatField()
+    z = models.FloatField(null=True)
     #time = models.DateTimeField()
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)

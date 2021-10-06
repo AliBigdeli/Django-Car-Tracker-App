@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}GPS Car Tracker | Dashboard{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item" aria-current="page">Dashboard</li>
+{% endblock %}
+
+{% block extra_css %}{% endblock %}
+
+{% block content %}
+<h1 class="h2">Dashboard</h1>
+<hr>
+<div class="row row-cols-1 row-cols-md-3 g-4"  id="list-wrapper">
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgTs-y4kezEz3UNQtVyv7H80lK7mQJLdg&v=weekly"
+	></script>
+<script>
+
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = cookies[i].trim();
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+
+	let csrftoken = getCookie('csrftoken');
+
+	var list_snapshot = new Array;
+
+	buildList()
+
+	function buildList() {
+		var wrapper = document.getElementById('list-wrapper')
+		var url = `/tracker/api/device/list`
+		var list
+		fetch(url)
+			.then((resp) => resp.json())
+			.then(function (data) {
+				// console.log('Data:', data)        
+
+				list = data
+				for (var i in list) {
+					try {
+						document.getElementById(`data-row-${i}`).remove()
+					} catch (err) {
+
+					}
+					var name = list[i].name
+					var token = list[i].token
+					var lat = list[i].lat
+					var lon = list[i].lon
+					var descriptions = list[i].descriptions
+					var item = `
+					<div class="col" id="data-row-${i}">
+						<div class="card">
+							<div style="width:100%; height:200px;" id="google-map-${i}">
+								
+							</div>
+							<div class="card-body">
+								<h5 class="card-title">${name}</h5>
+								<p class="card-text">${descriptions}</p>
+								<a href="/tracker/device/${token}" class="btn btn-primary">Tracker Detail</a>
+							</div>
+						</div>
+					</div>`
+					wrapper.innerHTML += item
+				}
+				Array.prototype.push.apply(list_snapshot, list);
+				//console.log(list_snapshot)
+				// for (var i in list) {
+				// 	var mapelement = document.getElementById(`google-map-${i}`)
+				// 	console.log(list[i])
+				// 	console.log(mapelement)
+				// 	if (list[i].lat != null && list[i].lon != null) {
+				// 		myMap(`google-map-${i}`, list[i].name, list[i].lat, list[i].lon);
+				// 	}
+				// }
+				initMap()
+
+			});
+	}
+
+	function initMap() {		
+		for (var i in list_snapshot) {
+			element_id = `google-map-${i}`
+			if (list_snapshot[i].lat == null && list_snapshot[i].lon == null)
+				continue
+			const myLatLng = { lat: list_snapshot[i].lat, lng: list_snapshot[i].lon };
+			const map = new google.maps.Map(document.getElementById(element_id), {
+				zoom: 15,
+				center: myLatLng,
+			});
+
+			new google.maps.Marker({
+				position: myLatLng,
+				map,
+				title: list_snapshot[i].name,
+			});
+		}
+
+	}
+
+</script>
+
+
+
+{% endblock %}
