@@ -43,7 +43,7 @@
     <div class="col-sm-9">
         <div class="card">
             <div class="card-body">
-                <div style="width:100%; height:500px;" id="google-map">
+                <div style="width:100%; height:500px;" id="map">
 
                 </div>
             </div>
@@ -95,6 +95,8 @@
 
 
 {% block extra_js %}
+<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgTs-y4kezEz3UNQtVyv7H80lK7mQJLdg&v=weekly"></script>
 <script>
     function getCookie(name) {
         var cookieValue = null;
@@ -114,69 +116,82 @@
 
     let csrftoken = getCookie('csrftoken');
 
-    
-    var list_snapshot = []
-    function buildList() {
-        console.log("buildlist")
+
+    var list_snapshot = new Array;
+
+
+    async function buildList() {
+        //console.log("buildlist")
         var wrapper = document.getElementById('list-wrapper')
         $(wrapper).empty();
         token = "{{device.token}}"
         var url = `/tracker/api/device/${token}/coordinate`
-        fetch(url)
-            .then((resp) => resp.json())
-            .then(function (data) {
-                var list = data
-                list_snapshot = list
-                for (var i in list) {
-                    try {
-                        document.getElementById(`data-row-${i}`).remove()
-                    } catch (err) {
+        const response = await fetch(url);
+        const data = await response.json();
+        //console.log(data)
+        var list = data
 
-                    }
-                    var lat = list[i].lat
-                    var lon = list[i].lon
-                    var z = list[i].z
-                    var created_date = list[i].created_date
-                    var item = `<tr">
+        for (var i in list) {
+            try {
+                document.getElementById(`data-row-${i}`).remove()
+            } catch (err) {
+
+            }
+            var lat = list[i].lat
+            var lon = list[i].lon
+            var z = list[i].z
+            var created_date = list[i].created_date
+            var item = `<tr">
 						<th scope="row" >${i}</th>
 						<td>${lat}</td>
 						<td>${lon}</td>
 						<td>${z}</td>
 						<td>${created_date}</td>						
 						</tr>`
-                    wrapper.innerHTML += item
-                }
-            })
+            wrapper.innerHTML += item
+        }
+
+        list_snapshot = [...list];
+
     }
 
-    let log_btn = document.getElementById('logbutton')
-    log_btn.addEventListener('click', function (e) {
-        buildList()
-    })
-
-
-
-    function initMap() {
-        const myLatLng = { lat: -25.363, lng: 131.044 };
-        const map = new google.maps.Map(document.getElementById("google-map"), {
-            zoom: 4,
-            center: myLatLng,
+    async function initMap() {
+        await buildList()
+        //console.log("list_snapshot", list_snapshot)        
+        var marker;
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 14,
+            center: new google.maps.LatLng(list_snapshot[0].lat, list_snapshot[0].lon),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
         });
-
-        new google.maps.Marker({
-            position: myLatLng,
-            map,
-            title: "Hello World!",
-        });
+        for (var i = 0; i < list_snapshot.length; i++) {
+            if (i == list_snapshot.length -1) {
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(list_snapshot[i].lat, list_snapshot[i].lon),
+                    map: map,
+                });
+            }
+            else {
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(list_snapshot[i].lat, list_snapshot[i].lon),
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 8.5,
+                        fillColor: "#F00",
+                        fillOpacity: 0.8,
+                        strokeWeight: 0.4
+                    },
+                });
+            }
+        }
     }
 
-    setInterval(function () { 
+    setInterval(function () {
         initMap();
-        buildList();
-        }, 60000);
+    }, 60000);
+
+    initMap();
 </script>
-<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-<script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgTs-y4kezEz3UNQtVyv7H80lK7mQJLdg&callback=initMap&v=weekly"
-    async></script>
+
 {% endblock %}
