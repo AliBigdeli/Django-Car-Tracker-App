@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Device
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+
+
 
 @login_required
 def indexView(request):
@@ -12,6 +16,7 @@ def deviceListView(request):
 
 @login_required
 def deviceDetailView(request,token):
+    auth_token = Token.objects.get(user=request.user)
     device = Device.objects.get(token=token)
-    context = {"device":device}
+    context = {"device":device,"api_key":auth_token}
     return render(request, "tracker/device_detail.html",context)

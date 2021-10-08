@@ -2,17 +2,14 @@
 
 {% block title %}GPS Car Tracker | Dashboard{% endblock %}
 
-{% block breadcrumb %}
-<li class="breadcrumb-item" aria-current="page">Dashboard</li>
-{% endblock %}
+
 
 {% block extra_css %}{% endblock %}
 
 {% block content %}
-<h1 class="h2">Dashboard</h1>
+<h1 class="mt-4">Dashboard</h1>                    
 <hr>
 <div class="row row-cols-1 row-cols-md-3 g-4"  id="list-wrapper">
-
 </div>
 
 {% endblock %}
@@ -69,14 +66,14 @@
 					var descriptions = list[i].descriptions
 					var item = `
 					<div class="col" id="data-row-${i}">
-						<div class="card">
+						<div class="card shadow">
 							<div style="width:100%; height:200px;" id="google-map-${i}">
 								
 							</div>
 							<div class="card-body">
 								<h5 class="card-title">${name}</h5>
 								<p class="card-text">${descriptions}</p>
-								<a href="/tracker/device/${token}" class="btn btn-primary">Tracker Detail</a>
+								<a href="/tracker/device/${token}" class="btn btn-warning">Tracker Detail</a>
 							</div>
 						</div>
 					</div>`

@@ -2,19 +2,17 @@
 
 {% block title %}GPS Car Tracker | Devices{% endblock %}
 
-{% block breadcrumb %}
-<li class="breadcrumb-item" aria-current="page">Devices</li>
-{% endblock %}
+
 
 {% block extra_css %}{% endblock %}
 
 {% block content %}
 <div class="d-flex">
 	<div>
-		<h1 class="h2">Devices</h1>
+		<h1 class="mt-4">Devices</h1>   
 	</div>
-	<div class="ms-auto">
-		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FormModal"
+	<div class="ms-auto mt-4">
+		<button type="button " class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#FormModal"
 			id="CreateDevice">
 			Add Device
 		</button>
@@ -23,16 +21,16 @@
 
 
 <hr>
-<div class="table-responsive">
+<div class="table-responsive" style="height: 100%;">
 	<table class="table">
 		<thead class="table-dark">
 
 			<tr>
 				<th scope="col">#</th>
 				<th scope="col">Name</th>
-				<th scope="col">Token</th>
+				<!-- <th scope="col">Token</th> -->
 				<th scope="col">Cell Number</th>
-				<th scope="col">Created_date</th>
+				<!-- <th scope="col">Created_date</th> -->
 				<th scope="col">Actions</th>
 			</tr>
 
@@ -122,15 +120,15 @@
 					var item = `<tr id="data-row-${i}">
 						<th scope="row" >${i}</th>
 						<td>${name}</td>
-						<td>${token}</td>
+						<!--<td>${token}</td>-->
 						<td>${cellnumber}</td>
-						<td>${created_date}</td>
+						<!--<td>${created_date}</td>-->
 						<td>
-							<button type="button" class="btn btn-primary detail" data-bs-toggle="modal" data-bs-target="#FormModal">
-								<i class="bi bi-pencil-square"></i>
+							<button type="button" class="btn btn-warning detail" data-bs-toggle="modal" data-bs-target="#FormModal">
+								<i class="fas fa-edit"></i>
 							</button>
 							<button type="button" class="btn btn-danger delete" data-bs-toggle="modal" data-bs-target="#FormModal">
-								<i class="bi bi-trash-fill"></i>
+								<i class="fa fa-trash" aria-hidden="true"></i>
 							</button></td>
 						</tr>`
 					wrapper.innerHTML += item
@@ -215,7 +213,7 @@
 				modal_footer = document.getElementById('ModalFooter')
 				modal_footer.innerHTML = "";
 				buttons = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        		<button type="button" class="btn btn-primary" onclick="createDevice(update=true,item_token='${item.token}')" id="SubmitButton" data-bs-dismiss="modal">Change</button>`
+        		<button type="button" class="btn btn-warning" onclick="createDevice(update=true,item_token='${item.token}')" id="SubmitButton" data-bs-dismiss="modal">Change</button>`
 				$(modal_footer).html(buttons);
 				obj_name.value = data.name
 				obj_cellnumber.value = data.cellnumber
@@ -249,7 +247,7 @@
 		modal_footer = document.getElementById('ModalFooter')
 		modal_footer.innerHTML = "";
 		buttons = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" onclick="createDevice()" id="SubmitButton" data-bs-dismiss="modal">Create</button>`
+        <button type="submit" class="btn btn-warning" onclick="createDevice()" id="SubmitButton" data-bs-dismiss="modal">Create</button>`
 		$(modal_footer).html(buttons);
 	})
 

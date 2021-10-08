@@ -32,7 +32,7 @@ class Coordinate(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE, null=True, blank=True)
     lat = models.FloatField()
     lon = models.FloatField()
-    z = models.FloatField(null=True)
+    z = models.FloatField(null=True,blank=True)
     #time = models.DateTimeField()
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
