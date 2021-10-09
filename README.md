@@ -158,6 +158,7 @@ A simple view of the project model schema.
 - [x] add heroku config files
 - [x] complete the documentation
 - [x] add one click deploy mechanism
+- [ ] add google api as env to configs
 - [ ] test post data on gprs module
 - [ ] create a video tutorial
 
