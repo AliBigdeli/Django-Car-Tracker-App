@@ -111,7 +111,7 @@ class CoordinateListView(APIView):
         """
         List all the coordinate items for given requested user
         """
-        device = self.get_device_obj(token,request.user.id)
+        device = self.get_device_obj(token, request.user.id)
         coordinates = Coordinate.objects.filter(device=device.id)[:20]
         serializer = CoordinateSerializer(coordinates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -148,7 +148,8 @@ class CoordinateCurrentView(APIView):
             return Device.objects.get(token=token, user=user_id)
         except Device.DoesNotExist:
             return None
-    def get(self, request,token, *args, **kwargs):
+
+    def get(self, request, token, *args, **kwargs):
         """
         List all the url items for given requested user
         """
@@ -158,6 +159,37 @@ class CoordinateCurrentView(APIView):
                 {"detail": "Object with device token does not exists"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        coordinate = Coordinate.objects.filter(device=device_instance.id).latest('created_date')
+        coordinate = Coordinate.objects.filter(
+            device=device_instance.id).latest('created_date')
         serializer = CoordinateSerializer(coordinate, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CoordinateGetView(APIView):
+    def get_device_obj(self, token):
+        """
+        Helper method to get the object with given url_id, and user_id
+        """
+        try:
+            return Device.objects.get(token=token)
+        except Device.DoesNotExist:
+            return None
+    def get(self, request, token, *args, **kwargs):
+        device_instance = self.get_device_obj(token)
+        if not device_instance:
+            return Response(
+                {"detail": "Object with device token does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        latitude = self.request.query_params.get('lat')
+        longitude = self.request.query_params.get('lon')
+        data = {"lat":latitude,"lon":longitude,"device":device_instance.id}
+        serializer = CoordinateSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+        
