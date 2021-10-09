@@ -1,7 +1,7 @@
 {
-  "name": "UrlSaver APP",
-  "description": "A django app project to keep your urls inside",
-  "repository": "https://github.com/AliBigdeli/Django-URLSaver-App",
+  "name": "Django GPS-CarTracker",
+  "description": "A django app project to track your car location",
+  "repository": "https://github.com/AliBigdeli/Django-Car-Tracker-App",
   "website": "https://alibigdeli.github.io",
   "keywords": [
     "django",
@@ -23,6 +23,10 @@
     "SECRET_KEY": {
       "description": "A secret key to encrypt data",
       "generator": "secret"
+    }
+    ,
+    "GOOGLEMAP_APIKEY": {
+      "description": "google map api key to use in pages",      
     }
   },
   "image": "heroku/python",
