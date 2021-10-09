@@ -30,6 +30,9 @@
 
 
 ### demo
+<p align="center">
+<img src="https://user-images.githubusercontent.com/29748439/136673759-d8f75bfa-bfaf-4bcf-abc3-b47089fa7cbd.gif" width="300"/>
+</p>
 
 
 ### Features
