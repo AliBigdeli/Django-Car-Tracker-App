@@ -151,7 +151,7 @@ Note: you can use the one click deploy on the top of the readme too
 ### Database schema
 A simple view of the project model schema.
 <p align="center">
-<img src="" alt="database schema" width="300"/>
+<img src="https://user-images.githubusercontent.com/29748439/136673503-c8b0d232-db03-4236-83a5-e40cf07baf31.png" alt="database schema" width="300"/>
 </p>
 
 ### Todo
