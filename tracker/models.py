@@ -29,7 +29,7 @@ class Device(models.Model):
         super().save(*args, **kwargs)
 
 class Coordinate(models.Model):
-    device = models.ForeignKey(Device, on_delete=models.CASCADE, null=True, blank=True)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
     lat = models.FloatField()
     lon = models.FloatField()
     z = models.FloatField(null=True,blank=True)
